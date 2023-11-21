@@ -1,4 +1,7 @@
-const ASPECT_RATIO = 4 / 5;
+import vertexShader from './shaders/basic.vert';
+import fragmentShader from './shaders/basic.frag';
+
+const ASPECT_RATIO = 1;
 
 const sketch = (p) => {
   const { seed = window.alba._testSeed(), isRenderer } = window.alba.params;
@@ -19,13 +22,23 @@ const sketch = (p) => {
     width = height * ASPECT_RATIO;
   }
 
+  let shader;
+
   p.setup = () => {
-    p.createCanvas(width, height);
-    p.background(0, 0, 0);
+    p.createCanvas(width, height, p.WEBGL);
+    p.noStroke();
+
+    shader = p.createShader(vertexShader, fragmentShader);
   };
 
   p.draw = () => {
-    // Implement your artwork.
+    p.shader(shader);
+
+    let time = p.millis() / 1000.0;
+    shader.setUniform('uResolution', [width, height]);
+    shader.setUniform('uTime', time);
+
+    p.rect(0, 0, width, height);
   };
 };
 
